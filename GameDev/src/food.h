@@ -4,30 +4,25 @@
  *  Created on: 12 янв. 2021 г.
  *      Author: Paper
  */
-#include <sdl.h>
 #ifndef FOOD_H_
 #define FOOD_H_
-struct Food {
-    int x,y;
-};
-
-void foodUpdate(SDL_Renderer * renderer, struct Food * food){
-    SDL_Rect rect = {food->x, food->y, 20, 20};
-    SDL_SetRenderDrawColor(renderer, 207, 52, 85, 255);
-    SDL_RenderFillRect(renderer, &rect);
-    SDL_RenderDrawRect(renderer, &rect);
+#define cell_width (scr_height/cell_size)
+#define cell_size 10
+#define cell_height (scr_width/cell_size)
+#define scr_height 600
+#define scr_width 400
+int foodx, foody;
+int placefood(SDL_Renderer *renderer) {
+    srand(time(NULL));
+    foodx = rand() % cell_width;
+    foody = rand() % cell_height;
+    return 0;
 }
 
-void foodSetRandomPosition(struct Food * food) {
-    srand(time(NULL));
-    int random_height = (rand() % 480);
-    int random_width = (rand() % 480);
-    int height_reminder = random_height % 25;
-    int width_reminder = random_width % 25;
-    food->x = random_height - height_reminder;
-    food->y = random_width - width_reminder;
-    printf("food->x %d\n", food->x);
-    printf("food->y %d\n", food->y);
+void generatefood(SDL_Renderer *renderer) {
+    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+    SDL_Rect rect = { foodx*cell_size, foody*cell_size, cell_size, cell_size };
+    SDL_RenderFillRect(renderer, &rect);
 }
 
 #endif /* FOOD_H_ */
