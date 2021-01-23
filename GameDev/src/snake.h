@@ -51,7 +51,7 @@ void snakeUpdate(struct SDL_Renderer * renderer, struct Snake * snake){
     SDL_SetRenderDrawColor(renderer, 80, 80, 80, 255);
     SDL_RenderDrawRect(renderer, &rect);
     SDL_RenderFillRect(renderer, &rect);
-    for(int i = 0; i <= snake->size - 1; i++){
+    for(int i = 0; i <= snake->size; i++){
         SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
         SDL_Rect new_tail = { snake->tail[i].x, snake->tail[i].y, snake->height, snake->width};
         SDL_RenderFillRect(renderer, &new_tail);
@@ -77,7 +77,7 @@ void snakeDeath(struct Snake * snake, struct Food *food){
 void snakeEat(struct Snake * snake, struct Food * food) {
    double dist = distance(snake->x,snake->y,food->x,food->y);
     if(dist < 1) {
-        snake->size += 1;
+        snake->size=+1;
         foodSetRandomPosition(food);
         struct Tail * temp = realloc(snake->tail, (snake->size * sizeof(struct Tail)));
         if(temp != NULL){
@@ -92,11 +92,11 @@ void snakeEat(struct Snake * snake, struct Food * food) {
 }
 
 void snakePhysics(struct Snake * snake) {
-    for(int i = 0; i <= snake->size - 2; i++){
+    for(int i = 0; i <= snake->size -2; i++){
         snake->tail[i] = snake->tail[i+1];
     }
     struct Tail new_tail = {snake->x, snake->y};
-    snake->tail[snake->size - 1] = new_tail;
+    snake->tail[snake->size] = new_tail;
     switch(snake->direction){
         case UP :
             snake->y -= SPEED;
