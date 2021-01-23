@@ -4,7 +4,7 @@
  *  Created on: 12 янв. 2021 г.
  *      Author: Paper
  */
-
+#include <sdl.h>
 #ifndef FOOD_H_
 #define FOOD_H_
 struct Food {
@@ -19,7 +19,7 @@ void foodUpdate(SDL_Renderer * renderer, struct Food * food){
 }
 
 void foodSetRandomPosition(struct Food * food) {
-    srand(time(NULL)); // Надо исправить
+    srand(time(NULL));
     int random_height = (rand() % 480);
     int random_width = (rand() % 480);
     int height_reminder = random_height % 25;
