@@ -16,54 +16,49 @@
 #include "food.h"
 #include "game.h"
 #include "snake.h"
-
-int done = 0;
-
-
-int main(int argc, char *argv[]) {
-    SDL_Window *window;
-    SDL_Renderer *renderer;
-    if(SDL_Init(SDL_INIT_VIDEO) < 0){
-        return 1;
-    }
-    window = SDL_CreateWindow("Snake Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 500, 500, SDL_WINDOW_OPENGL);
-    renderer = SDL_CreateRenderer(window, -1, 0);
-    struct Snake snake;
-    struct Food food;
-    setup(&snake, &food);
+#include <time.h>
 
 
-    SDL_Event event;
-    while(!done){
-        SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
-        SDL_RenderClear(renderer);
-        snakeDeath(&snake, &food);
-        snakeEat(&snake, &food);
-        snakePhysics(&snake);
-        snakeUpdate(renderer, &snake);
-        foodUpdate(renderer, &food);
-        SDL_RenderPresent(renderer);
-        while(SDL_PollEvent(&event)){
-            if(event.type == SDL_QUIT){
-                done = 1;
-            }
-            const Uint8 *state = SDL_GetKeyboardState(NULL);
-            if(state[SDL_SCANCODE_UP] && snake.direction != DOWN){
-                snake.direction = UP;
-            }
-            if(state[SDL_SCANCODE_DOWN] && snake.direction != UP){
-                snake.direction = DOWN;
-            }
-            if(state[SDL_SCANCODE_LEFT] && snake.direction != RIGHT){
-                snake.direction = LEFT;
-            }
-            if(state[SDL_SCANCODE_RIGHT] && snake.direction != LEFT){
-                snake.direction = RIGHT;
-            }
+#define fps 15
+#define framedelay (1000/fps)
+
+int main(int argc, char **argv)
+{
+    SDL_Init(SDL_INIT_VIDEO);
+
+    SDL_Window *window = SDL_CreateWindow("snake game", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, scr_height+1, scr_width+1, SDL_WINDOW_OPENGL);
+
+    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+
+    int framestart;
+    int frametime;
+    generatefood(renderer);
+    placefood(renderer);
+    int quit = 0;
+    while(!quit)
+    {
+        framestart = SDL_GetTicks();
+        frametime = SDL_GetTicks() - framestart;
+        if(framedelay > frametime){
+            SDL_Delay(framedelay - frametime);
         }
-        SDL_Delay(1200);
+        int keypress = eventcontrol(window);
+        if(keypress==1){ quit=1; }
+        if(keypress==6){posx[0]+=cell_size;}
+        if(keypress==8){posy[0]-=cell_size;}
+        if(keypress==4){posx[0]-=cell_size;}
+        if(keypress==2){posy[0]+=cell_size;}
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_RenderClear(renderer);
+
+        gamewindow(renderer);
+
+        SDL_RenderPresent(renderer);
     }
+
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
-    printf("DEAD\n");
+    SDL_Quit();
+
+    return 0;
 }
